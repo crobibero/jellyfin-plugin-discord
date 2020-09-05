@@ -1,4 +1,9 @@
-# Jellyfin notifications for Discord
+<h1 align="center">Jellyfin Discord Plugin</h1>
+<h3 align="center">Part of the <a href="https://jellyfin.org/">Jellyfin Project</a></h3>
+
+###
+Repository Url:
+https://repo.codyrobibero.dev/manifest.json
 
 ### Configuration
 

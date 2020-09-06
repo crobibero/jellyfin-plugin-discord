@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Jellyfin.Plugin.Discord.Models
 {
@@ -18,6 +19,7 @@ namespace Jellyfin.Plugin.Discord.Models
         /// <summary>
         /// Gets or sets avatar url.
         /// </summary>
+        [JsonPropertyName("avatar_url")]
         public string AvatarUrl { get; set; }
 
         /// <summary>

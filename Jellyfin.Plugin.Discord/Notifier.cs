@@ -225,6 +225,7 @@ namespace Jellyfin.Plugin.Discord
 
                         var libraryType = item.GetType().Name;
                         var serverName = options.ServerNameOverride ? serverConfig.ServerName : "Jellyfin Server";
+                        serverName ??= "Jellyfin Server";
 
                         // for whatever reason if you have extraction on during library scans then it waits for the extraction to finish before populating the metadata.... I don't get why the fuck it goes in that order
                         // its basically impossible to make a prediction on how long it could take as its dependent on the bitrate, duration, codec, and processing power of the system
@@ -273,7 +274,7 @@ namespace Jellyfin.Plugin.Discord
                                 titleText = $"{item.Name}{(item.ProductionYear.HasValue ? $" ({item.ProductionYear.ToString()})" : string.Empty)}";
                             }
 
-                            mediaAddedEmbed.Embeds.First().Title = $"{titleText} has been added to {serverName.Trim()}";
+                            mediaAddedEmbed.Embeds[0].Title = $"{titleText} has been added to {serverName.Trim()}";
 
                             // populate description
                             if (libraryType == "Audio")
@@ -298,7 +299,7 @@ namespace Jellyfin.Plugin.Discord
 
                                     if (serverConfig.EnableRemoteAccess && !options.ExcludeExternalServerLinks)
                                     {
-                                        formattedArtist += $" [(Jellyfin)]({options.ServerUrl}/web/index.html#!/item?id={itemId}&serverId={_applicationHost.SystemId})";
+                                        formattedArtist += $" [(Jellyfin)]({options.ServerUrl}/web/index.html#!/details?id={itemId}&serverId={_applicationHost.SystemId})";
                                     }
 
                                     return formattedArtist;
@@ -306,21 +307,21 @@ namespace Jellyfin.Plugin.Discord
 
                                 if (artists.Items.Count != 0)
                                 {
-                                    mediaAddedEmbed.Embeds.First().Description = $"By {string.Join(", ", artistsFormat)}";
+                                    mediaAddedEmbed.Embeds[0].Description = $"By {string.Join(", ", artistsFormat)}";
                                 }
                             }
                             else
                             {
                                 if (!string.IsNullOrEmpty(item.Overview))
                                 {
-                                    mediaAddedEmbed.Embeds.First().Description = item.Overview;
+                                    mediaAddedEmbed.Embeds[0].Description = item.Overview;
                                 }
                             }
 
                             // populate title URL
                             if (serverConfig.EnableRemoteAccess && !options.ExcludeExternalServerLinks)
                             {
-                                mediaAddedEmbed.Embeds.First().Url = $"{options.ServerUrl}/web/index.html#!/item?id={itemId}&serverId={_applicationHost.SystemId}";
+                                mediaAddedEmbed.Embeds[0].Url = $"{options.ServerUrl}/web/index.html#!/details?id={itemId}&serverId={_applicationHost.SystemId}";
                             }
 
                             // populate images
@@ -351,7 +352,7 @@ namespace Jellyfin.Plugin.Discord
                                     }
                                 }
 
-                                mediaAddedEmbed.Embeds.First().Thumbnail = new Thumbnail
+                                mediaAddedEmbed.Embeds[0].Thumbnail = new Thumbnail
                                 {
                                     Url = imageUrl
                                 };
@@ -408,7 +409,7 @@ namespace Jellyfin.Plugin.Discord
 
                                 if (providerFields.Count > 0)
                                 {
-                                    mediaAddedEmbed.Embeds.First().Fields.AddRange(providerFields);
+                                    mediaAddedEmbed.Embeds[0].Fields.AddRange(providerFields);
                                 }
                             }
 

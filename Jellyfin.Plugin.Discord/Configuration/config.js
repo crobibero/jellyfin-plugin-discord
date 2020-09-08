@@ -32,6 +32,7 @@
                 page.querySelector("#chkEnableSongs").checked = isEmpty(discordConfig.EnableSongs) ? true : discordConfig.EnableSongs;
 
                 page.querySelector("#txtDiscordWebhookUri").value = discordConfig.DiscordWebhookUri || "";
+                page.querySelector("#txtServerUrl").value = discordConfig.ServerUrl || "";
                 page.querySelector("#txtUsername").value = discordConfig.Username || "";
                 page.querySelector("#txtAvatarUrl").value = discordConfig.AvatarUrl || "";
                 page.querySelector("#mentionType").value = discordConfig.MentionType || "None";
@@ -97,6 +98,7 @@
 
                 discordConfig.MentionType = page.querySelector("#mentionType").value;
                 discordConfig.DiscordWebhookUri = page.querySelector("#txtDiscordWebhookUri").value;
+                discordConfig.ServerUrl = page.querySelector("#txtServerUrl").value;
                 discordConfig.Username = page.querySelector("#txtUsername").value;
                 discordConfig.AvatarUrl = page.querySelector("#txtAvatarUrl").value;
                 discordConfig.EmbedColor = page.querySelector("#embedColor").value;

@@ -9,7 +9,7 @@
         // ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!
 
         var pluginId = "71552A5A-5C5C-4350-A2AE-EBE451A30173";
-        var defaultEmbedColor = "#53b64c";
+        var defaultEmbedColor = "#AA5CC3";
 
         function loadUserConfig(page, userId) {
             loading.show();

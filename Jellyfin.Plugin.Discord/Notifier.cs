@@ -89,58 +89,58 @@ namespace Jellyfin.Plugin.Discord
         public string Name => DiscordPlugin.Instance.Name;
 
         /// <inheritdoc />
-        public async Task SendNotification(UserNotification request, CancellationToken cancellationToken)
+        public Task SendNotification(UserNotification request, CancellationToken cancellationToken)
         {
-            await Task.Run(
-                () =>
+            var options = GetOptions(request.User);
+
+            if ((!options.MediaAddedOverride || request.Name.Contains(_localizationManager.GetLocalizedString("ValueHasBeenAddedToLibrary").Replace("{0} ", string.Empty, StringComparison.OrdinalIgnoreCase).Replace(" {1}", string.Empty, StringComparison.OrdinalIgnoreCase), StringComparison.OrdinalIgnoreCase)) && options.MediaAddedOverride)
+            {
+                return Task.CompletedTask;
+            }
+
+            var serverName = _serverConfiguration.Configuration.ServerName;
+
+            string footerText;
+            string requestName;
+
+            if (options.ServerNameOverride)
+            {
+                footerText = $"From {serverName}";
+                requestName = request.Name.Replace("Jellyfin Server", serverName, StringComparison.OrdinalIgnoreCase);
+            }
+            else
+            {
+                requestName = request.Name;
+                footerText = "From Jellyfin Server";
+            }
+
+            var discordMessage = new DiscordMessage();
+            discordMessage.AvatarUrl = options.AvatarUrl;
+            discordMessage.Username = options.Username;
+            discordMessage.Embeds.Add(
+                new DiscordEmbed
                 {
-                    var options = GetOptions(request.User);
-
-                    if ((options.MediaAddedOverride && !request.Name.Contains(_localizationManager.GetLocalizedString("ValueHasBeenAddedToLibrary").Replace("{0} ", string.Empty, StringComparison.OrdinalIgnoreCase).Replace(" {1}", string.Empty, StringComparison.OrdinalIgnoreCase), StringComparison.OrdinalIgnoreCase)) || !options.MediaAddedOverride)
+                    Color = DiscordWebhookHelper.FormatColorCode(options.EmbedColor),
+                    Title = requestName,
+                    Description = request.Description,
+                    Footer = new Footer
                     {
-                        var serverName = _serverConfiguration.Configuration.ServerName;
+                        IconUrl = options.AvatarUrl,
+                        Text = footerText
+                    },
+                    Timestamp = DateTime.Now
+                });
 
-                        string footerText;
-                        string requestName;
+            discordMessage.Content = options.MentionType switch
+            {
+                MentionType.Everyone => "@everyone",
+                MentionType.Here => "@here",
+                _ => string.Empty
+            };
 
-                        if (options.ServerNameOverride)
-                        {
-                            footerText = $"From {serverName}";
-                            requestName = request.Name.Replace("Jellyfin Server", serverName, StringComparison.OrdinalIgnoreCase);
-                        }
-                        else
-                        {
-                            requestName = request.Name;
-                            footerText = "From Jellyfin Server";
-                        }
+            _pendingSendQueue.Add(discordMessage, options);
 
-                        var discordMessage = new DiscordMessage();
-                        discordMessage.AvatarUrl = options.AvatarUrl;
-                        discordMessage.Username = options.Username;
-                        discordMessage.Embeds.Add(
-                            new DiscordEmbed
-                            {
-                                Color = DiscordWebhookHelper.FormatColorCode(options.EmbedColor),
-                                Title = requestName,
-                                Description = request.Description,
-                                Footer = new Footer
-                                {
-                                    IconUrl = options.AvatarUrl,
-                                    Text = footerText
-                                },
-                                Timestamp = DateTime.Now
-                            });
-
-                        discordMessage.Content = options.MentionType switch
-                        {
-                            MentionType.Everyone => "@everyone",
-                            MentionType.Here => "@here",
-                            _ => string.Empty
-                        };
-
-                        _pendingSendQueue.Add(discordMessage, options);
-                    }
-                }, cancellationToken).ConfigureAwait(false);
+            return Task.CompletedTask;
         }
 
         /// <inheritdoc />

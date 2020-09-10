@@ -6,206 +6,202 @@
     "formDialogStyle",
     "flexStyles"
 ], function (loading, dialogHelper) {
-        // ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!
+    // ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!ebr let me in the plugin catalog!
 
-        var pluginId = "71552A5A-5C5C-4350-A2AE-EBE451A30173";
-        var defaultEmbedColor = "#AA5CC3";
+    var pluginId = "71552A5A-5C5C-4350-A2AE-EBE451A30173";
+    var defaultEmbedColor = "#AA5CC3";
 
-        function loadUserConfig(page, userId) {
-            loading.show();
+    function loadUserConfig(page, userId) {
+        loading.show();
 
-            ApiClient.getPluginConfiguration(pluginId).then(function (config) {
-                var discordConfig = config.Options.filter(function (config) {
-                    return userId === config.UserId;
-                })[0] || {};
+        ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+            var discordConfig = config.Options.filter(function (config) {
+                return userId === config.UserId;
+            })[0] || {};
 
-                page.querySelector('#chkEnableDiscord').checked = discordConfig.Enabled || false;
-                page.querySelector("#chkExcludeExternalServerLinks").checked = discordConfig.ExcludeExternalServerLinks || false;
-                page.querySelector("#chkOverrideServerName").checked = isEmpty(discordConfig.ServerNameOverride) ? true : discordConfig.ServerNameOverride;
-                page.querySelector("#chkOverrideMediaAdded").checked = isEmpty(discordConfig.MediaAddedOverride) ? true : discordConfig.MediaAddedOverride;
-                
-                page.querySelector("#chkEnableMovies").checked = isEmpty(discordConfig.EnableMovies) ? true : discordConfig.EnableMovies;
-                page.querySelector("#chkEnableEpisodes").checked = isEmpty(discordConfig.EnableEpisodes) ? true : discordConfig.EnableEpisodes;
-                page.querySelector("#chkEnableSeasons").checked = discordConfig.EnableSeasons || false;
-                page.querySelector("#chkEnableSeries").checked = discordConfig.EnableSeries || false;
-                page.querySelector("#chkEnableAlbums").checked = discordConfig.EnableAlbums || false;
-                page.querySelector("#chkEnableSongs").checked = isEmpty(discordConfig.EnableSongs) ? true : discordConfig.EnableSongs;
+            page.querySelector('#chkEnableDiscord').checked = discordConfig.Enabled || false;
+            page.querySelector("#chkExcludeExternalServerLinks").checked = discordConfig.ExcludeExternalServerLinks || false;
+            page.querySelector("#chkOverrideServerName").checked = isEmpty(discordConfig.ServerNameOverride) ? true : discordConfig.ServerNameOverride;
+            page.querySelector("#chkOverrideMediaAdded").checked = isEmpty(discordConfig.MediaAddedOverride) ? true : discordConfig.MediaAddedOverride;
 
-                page.querySelector("#txtDiscordWebhookUri").value = discordConfig.DiscordWebhookUri || "";
-                page.querySelector("#txtServerUrl").value = discordConfig.ServerUrl || "";
-                page.querySelector("#txtUsername").value = discordConfig.Username || "";
-                page.querySelector("#txtAvatarUrl").value = discordConfig.AvatarUrl || "";
-                page.querySelector("#mentionType").value = discordConfig.MentionType || "None";
-                page.querySelector("#embedColor").value = discordConfig.EmbedColor || defaultEmbedColor;
-                page.querySelector("#txtEmbedColor").value = discordConfig.EmbedColor || defaultEmbedColor;
+            page.querySelector("#chkEnableMovies").checked = isEmpty(discordConfig.EnableMovies) ? true : discordConfig.EnableMovies;
+            page.querySelector("#chkEnableEpisodes").checked = isEmpty(discordConfig.EnableEpisodes) ? true : discordConfig.EnableEpisodes;
+            page.querySelector("#chkEnableSeasons").checked = discordConfig.EnableSeasons || false;
+            page.querySelector("#chkEnableSeries").checked = discordConfig.EnableSeries || false;
+            page.querySelector("#chkEnableAlbums").checked = discordConfig.EnableAlbums || false;
+            page.querySelector("#chkEnableSongs").checked = isEmpty(discordConfig.EnableSongs) ? true : discordConfig.EnableSongs;
 
-                toggleNotificationTypes(page);
+            page.querySelector("#txtDiscordWebhookUri").value = discordConfig.DiscordWebhookUri || "";
+            page.querySelector("#txtServerUrl").value = discordConfig.ServerUrl || "";
+            page.querySelector("#txtUsername").value = discordConfig.Username || "";
+            page.querySelector("#txtAvatarUrl").value = discordConfig.AvatarUrl || "";
+            page.querySelector("#mentionType").value = discordConfig.MentionType || "None";
+            page.querySelector("#embedColor").value = discordConfig.EmbedColor || defaultEmbedColor;
+            page.querySelector("#txtEmbedColor").value = discordConfig.EmbedColor || defaultEmbedColor;
 
-                loading.hide();
-            });
-        }
-
-        function isEmpty(value) {
-            if (
-                value === undefined ||
-                value === null ||
-                (typeof value === "object" && Object.keys(value).length === 0) ||
-                (typeof value === "string" && value.trim() === 0)
-            ) return true; 
-        }
-
-        function toggleNotificationTypes(page) {
-            var notificationTypeGroup = page.querySelector("#notificationTypeGroup");
-
-            if(page.querySelector("#chkOverrideMediaAdded").checked) {
-                notificationTypeGroup.hidden = false;
-            } else {
-                notificationTypeGroup.hidden = true;
-            }
-        }
-
-        function saveConfig(e) {
-            e.preventDefault;
-
-            var page = this;
-
-            loading.show();
-
-            ApiClient.getPluginConfiguration(pluginId).then(function (config) {
-                var userId = page.querySelector("#selectUser").value;
-
-                var discordConfig = config.Options.filter(function (config) {
-                    return userId === config.UserId;
-                })[0];
-
-                if (!discordConfig) {
-                    discordConfig = {};
-                    config.Options.push(discordConfig);
-                } 
-
-                discordConfig.Enabled = page.querySelector('#chkEnableDiscord').checked;
-                discordConfig.UserId = userId;
-                discordConfig.ExcludeExternalServerLinks = page.querySelector("#chkExcludeExternalServerLinks").checked;
-                discordConfig.ServerNameOverride = page.querySelector("#chkOverrideServerName").checked;
-                discordConfig.MediaAddedOverride = page.querySelector("#chkOverrideMediaAdded").checked;
-
-                discordConfig.EnableMovies = page.querySelector("#chkEnableMovies").checked;
-                discordConfig.EnableEpisodes = page.querySelector("#chkEnableEpisodes").checked;
-                discordConfig.EnableSeasons = page.querySelector("#chkEnableSeasons").checked;
-                discordConfig.EnableSeries = page.querySelector("#chkEnableSeries").checked;
-                discordConfig.EnableAlbums = page.querySelector("#chkEnableAlbums").checked;
-                discordConfig.EnableSongs = page.querySelector("#chkEnableSongs").checked;
-
-                discordConfig.MentionType = page.querySelector("#mentionType").value;
-                discordConfig.DiscordWebhookUri = page.querySelector("#txtDiscordWebhookUri").value;
-                discordConfig.ServerUrl = page.querySelector("#txtServerUrl").value;
-                discordConfig.Username = page.querySelector("#txtUsername").value;
-                discordConfig.AvatarUrl = page.querySelector("#txtAvatarUrl").value;
-                discordConfig.EmbedColor = page.querySelector("#embedColor").value;
-
-                ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
-            });
-        }
-
-        function testNotification(page) {
-            loading.show();
-
-            var onError = function (data) {
-                loading.hide();
-
-                if (data.status === 400) {
-                    alert("Webhook Invalid");
-                } else if (data.status === 500) {
-                    var dialogOptions = { removeOnClose: true, scrollY: !1, size: "small" }
-                    var dialog = dialogHelper.createDialog(dialogOptions);
-                    dialog.classList.add("formDialog"),
-                        dialog.classList.add("justify-content-center"),
-                        dialog.style.height = "150px",
-                        dialog.classList.add("align-items-center"),
-                        dialog.innerHTML = '<div class="formDialogHeader formDialogHeader-clear justify-content-center"><h2 class="formDialogHeaderTitle hide" style="margin-left:0;margin-top: .5em;padding: 0 1em;"></h2></div><div is="emby-scroller" data-horizontal="false" data-centerfocus="card" class="formDialogContent emby-scroller no-grow scrollY" style="width:100%;"><div class="scrollSlider dialogContentInner dialog-content-centered padded-left padded-right scrollSliderY" style="text-align:center;padding-bottom:1em;">' + "ErrorInternalServer" +'</div></div><div class="formDialogFooter formDialogFooter-clear formDialogFooter-flex"><button id="dialogSubmitBtn-3434321" is="emby-button" type="button" class="btnOption raised formDialogFooterItem formDialogFooterItem-autosize button-submit emby-button" data-id="ok" autofocus=""></button></div>';
-
-                    dialogHelper.open(dialog);
-
-                    // im too lazy to reverse engineer the dashboard code to find how to properly attach buttons, this works for now lol
-                    document.getElementById("dialogSubmitBtn-3434321").addEventListener("click", function () {
-                        dialogHelper.close(dialog);
-                    });
-                }
-            }
-
-            ApiClient.getPluginConfiguration(pluginId).then(function (config) {
-                var selectedUser = page.querySelector("#selectUser").value;
-
-                var userConfig = config.Options.filter(function (config) {
-                    return selectedUser === config.UserId;
-                })[0];
-
-                if (!userConfig) {
-                    loading.hide();
-                    alert("Configure Notifications");
-                }
-
-                ApiClient.ajax({
-                    type: "POST",
-                    url: ApiClient.getUrl("Notifications/Discord/Test/" + userConfig.UserId)
-                }).then(function () {
-                    loading.hide();
-
-                    alert("Notification Sent");
-                }, onError);
-            });
-        }
-
-        function trigger(element, type) {
-            // remove support for udner ie-9, not going to support a browser that people shouldnt use
-            var e = document.createEvent('HTMLEvents');
-            e.initEvent(type, false, true);
-            element.dispatchEvent(e);
-        }
-
-        function loadUsers(page) {
-            loading.show();
-
-            ApiClient.getUsers().then(function (users) {
-                var selectUsers = page.querySelector("#selectUser");
-
-                selectUsers.innerHTML = users.map(function (user) {
-                    return '<option value="' + user.Id + '">' + user.Name + '</option>';
-                });
-
-                trigger(selectUsers, "change");
-            });
+            toggleNotificationTypes(page);
 
             loading.hide();
+        });
+    }
+
+    function isEmpty(value) {
+        if (
+            value === undefined ||
+            value === null ||
+            (typeof value === "object" && Object.keys(value).length === 0) ||
+            (typeof value === "string" && value.trim().length === 0)
+        ) return true;
+    }
+
+    function toggleNotificationTypes(page) {
+        var notificationTypeGroup = page.querySelector("#notificationTypeGroup");
+        notificationTypeGroup.hidden = !page.querySelector("#chkOverrideMediaAdded").checked;
+    }
+
+    function saveConfig(e) {
+        e.preventDefault();
+
+        var page = this;
+
+        loading.show();
+
+        ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+            var userId = page.querySelector("#selectUser").value;
+
+            var discordConfig = config.Options.filter(function (config) {
+                return userId === config.UserId;
+            })[0];
+
+            if (!discordConfig) {
+                discordConfig = {};
+                config.Options.push(discordConfig);
+            }
+
+            discordConfig.Enabled = page.querySelector('#chkEnableDiscord').checked;
+            discordConfig.UserId = userId;
+            discordConfig.ExcludeExternalServerLinks = page.querySelector("#chkExcludeExternalServerLinks").checked;
+            discordConfig.ServerNameOverride = page.querySelector("#chkOverrideServerName").checked;
+            discordConfig.MediaAddedOverride = page.querySelector("#chkOverrideMediaAdded").checked;
+
+            discordConfig.EnableMovies = page.querySelector("#chkEnableMovies").checked;
+            discordConfig.EnableEpisodes = page.querySelector("#chkEnableEpisodes").checked;
+            discordConfig.EnableSeasons = page.querySelector("#chkEnableSeasons").checked;
+            discordConfig.EnableSeries = page.querySelector("#chkEnableSeries").checked;
+            discordConfig.EnableAlbums = page.querySelector("#chkEnableAlbums").checked;
+            discordConfig.EnableSongs = page.querySelector("#chkEnableSongs").checked;
+
+            discordConfig.MentionType = page.querySelector("#mentionType").value;
+            discordConfig.DiscordWebhookUri = page.querySelector("#txtDiscordWebhookUri").value;
+            discordConfig.ServerUrl = page.querySelector("#txtServerUrl").value;
+            discordConfig.Username = page.querySelector("#txtUsername").value;
+            discordConfig.AvatarUrl = page.querySelector("#txtAvatarUrl").value;
+            discordConfig.EmbedColor = page.querySelector("#embedColor").value;
+
+            ApiClient.updatePluginConfiguration(pluginId, config).then(Dashboard.processPluginConfigurationUpdateResult);
+        });
+    }
+
+    function testNotification(page) {
+        loading.show();
+
+        var onError = function (data) {
+            loading.hide();
+
+            if (data.status === 400) {
+                alert("Webhook Invalid");
+            } else if (data.status === 500) {
+                var dialogOptions = {removeOnClose: true, scrollY: !1, size: "small"}
+                var dialog = dialogHelper.createDialog(dialogOptions);
+                dialog.classList.add("formDialog"),
+                    dialog.classList.add("justify-content-center"),
+                    dialog.style.height = "150px",
+                    dialog.classList.add("align-items-center"),
+                    dialog.innerHTML = '<div class="formDialogHeader formDialogHeader-clear justify-content-center"><h2 class="formDialogHeaderTitle hide" style="margin-left:0;margin-top: .5em;padding: 0 1em;"></h2></div><div is="emby-scroller" data-horizontal="false" data-centerfocus="card" class="formDialogContent emby-scroller no-grow scrollY" style="width:100%;"><div class="scrollSlider dialogContentInner dialog-content-centered padded-left padded-right scrollSliderY" style="text-align:center;padding-bottom:1em;">' + "ErrorInternalServer" + '</div></div><div class="formDialogFooter formDialogFooter-clear formDialogFooter-flex"><button id="dialogSubmitBtn-3434321" is="emby-button" type="button" class="btnOption raised formDialogFooterItem formDialogFooterItem-autosize button-submit emby-button" data-id="ok" autofocus=""></button></div>';
+
+                dialogHelper.open(dialog);
+
+                // im too lazy to reverse engineer the dashboard code to find how to properly attach buttons, this works for now lol
+                document.getElementById("dialogSubmitBtn-3434321").addEventListener("click", function () {
+                    dialogHelper.close(dialog);
+                });
+            }
         }
 
-        return function (view) {
-            view.addEventListener("viewshow", function () {
-                var page = this;
+        ApiClient.getPluginConfiguration(pluginId).then(function (config) {
+            var selectedUser = page.querySelector("#selectUser").value;
 
-                view.querySelector("form").addEventListener("submit", saveConfig);
+            var userConfig = config.Options.filter(function (config) {
+                return selectedUser === config.UserId;
+            })[0];
 
-                loadUsers(page); // load all users into select
+            if (!userConfig) {
+                loading.hide();
+                alert("Configure Notifications");
+                return;
+            }
 
-                page.querySelector("#selectUser").addEventListener("change", function () {
-                    loadUserConfig(page, this.value);
-                });
+            ApiClient.ajax({
+                type: "POST",
+                url: ApiClient.getUrl("Notifications/Discord/Test/" + userConfig.UserId)
+            }).then(function () {
+                loading.hide();
 
-                page.querySelector("#chkOverrideMediaAdded").addEventListener("change", function() {
-                    toggleNotificationTypes(page);
-                });
+                alert("Notification Sent");
+            }, onError);
+        });
+    }
 
-                page.querySelector("#embedColor").addEventListener("change", function () {
-                    page.querySelector("#txtEmbedColor").value = this.value;
-                });
+    function trigger(element, type) {
+        // remove support for udner ie-9, not going to support a browser that people shouldnt use
+        var e = document.createEvent('HTMLEvents');
+        e.initEvent(type, false, true);
+        element.dispatchEvent(e);
+    }
 
-                page.querySelector("#txtEmbedColor").addEventListener("input", function () {
-                    page.querySelector("#embedColor").value = this.value;
-                });
+    function loadUsers(page) {
+        loading.show();
 
-                page.querySelector("#btnTestNotification").addEventListener("click", function () {
-                    testNotification(page);
-                });
+        ApiClient.getUsers().then(function (users) {
+            var selectUsers = page.querySelector("#selectUser");
+
+            selectUsers.innerHTML = users.map(function (user) {
+                return '<option value="' + user.Id + '">' + user.Name + '</option>';
             });
-        }
+
+            trigger(selectUsers, "change");
+        });
+
+        loading.hide();
+    }
+
+    return function (view) {
+        view.addEventListener("viewshow", function () {
+            var page = this;
+
+            view.querySelector("form").addEventListener("submit", saveConfig);
+
+            loadUsers(page); // load all users into select
+
+            page.querySelector("#selectUser").addEventListener("change", function () {
+                loadUserConfig(page, this.value);
+            });
+
+            page.querySelector("#chkOverrideMediaAdded").addEventListener("change", function () {
+                toggleNotificationTypes(page);
+            });
+
+            page.querySelector("#embedColor").addEventListener("change", function () {
+                page.querySelector("#txtEmbedColor").value = this.value;
+            });
+
+            page.querySelector("#txtEmbedColor").addEventListener("input", function () {
+                page.querySelector("#embedColor").value = this.value;
+            });
+
+            page.querySelector("#btnTestNotification").addEventListener("click", function () {
+                testNotification(page);
+            });
+        });
+    }
 });
